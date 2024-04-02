@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.foods.data.database.dao.MealDao
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MealQuery {
