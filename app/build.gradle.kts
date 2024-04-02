@@ -3,7 +3,8 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.devtoolsKsp)
     id("dagger.hilt.android.plugin")
-    id("kotlin-parcelize")
+    kotlin("plugin.serialization")
+    //id("kotlin-parcelize")
     kotlin("kapt")
 }
 
@@ -40,7 +41,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://themealdb.com\"")
+        }
         release {
+            buildConfigField("String", "BASE_URL", "\"https://themealdb.com\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -57,6 +62,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
@@ -93,11 +99,6 @@ dependencies {
     //ui
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    //navigation
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.raamcosta.animations.core)
-    ksp(libs.raamcosta.ksp)
-    implementation(libs.accompanist.navigation.material)
     //room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)

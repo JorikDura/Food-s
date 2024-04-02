@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu">Меню</string>
+    <string name="profile">Профиль</string>
+    <string name="cart">Корзина</string>
+    <string name="Moscow">Москва</string>
+    <string name="error_message">Ошибка</string>
+    <string name="empty">Здесь пусто (┬┬﹏┬┬)</string>
+    <string name="tag_all">Все</string>
+</resources>

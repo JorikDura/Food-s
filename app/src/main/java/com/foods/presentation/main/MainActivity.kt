@@ -5,13 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import com.foods.R
 import com.foods.ui.theme.FoodsTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,10 +20,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            FoodsTheme {
+            FoodsTheme(
+                darkTheme = false,
+                dynamicColor = false
+            ) {
                 val systemUIController = rememberSystemUiController()
-                val navigationBarColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
-                val statusBarColor = MaterialTheme.colorScheme.surface
+                val navigationBarColor = colorResource(id = R.color.light_gray)
+                val statusBarColor =
+                    if (isSystemInDarkTheme()) Color.DarkGray
+                    else colorResource(id = R.color.gray_white)
                 val isDarkTheme = isSystemInDarkTheme()
 
                 SideEffect {
@@ -38,12 +42,12 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    color = colorResource(id = R.color.gray_white)
                 ) {
-                    Text(text = "Test")
+                    MainScreen()
                 }
             }
         }
