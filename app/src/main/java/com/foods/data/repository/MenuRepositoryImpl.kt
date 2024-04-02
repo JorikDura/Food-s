@@ -18,9 +18,6 @@ class MenuRepositoryImpl @Inject constructor(
     private val mealDB: MealDataBase
 ) : MenuRepository {
 
-    /**
-     *
-     */
     override suspend fun getTags(fromRemote: Boolean): Result<List<Tag>> {
         try {
             var tagsFromDb = mealDB.tagDao.getTags()

@@ -29,6 +29,9 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Event handler
+     */
     fun onEvent(event: MainScreenEvents) {
         when (event) {
             is MainScreenEvents.BuyMeal -> {
@@ -61,6 +64,9 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Getting all data(tags, meals) from db/api
+     */
     private suspend fun getData(fromRemote: Boolean = false) {
         val tags = getTagsUseCase(fromRemote = fromRemote)
         val meals = getMealsUseCase(fromRemote = fromRemote, tag = _state.value.currentTag.title)
@@ -96,11 +102,7 @@ class MainScreenViewModel @Inject constructor(
                         isEmpty = tagsResult.isEmpty() && mealsResult.isEmpty(),
                         tags = _state.value.tags + tagsResult,
                         meals = mealsResult,
-                        banners = mutableListOf<Int>().apply {
-                            repeat(5) {
-                                add(R.drawable.banner_1)
-                            }
-                        },
+                        banners = getFakeBanners(),
                         isError = false,
                         errorMessage = NO_ERROR
                     )
@@ -109,6 +111,10 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Getting meals by tag
+     * Default tag is "All"
+     */
     private suspend fun getMealsByTag() {
         val meals = getMealsUseCase(tag = _state.value.currentTag.title)
 
@@ -129,6 +135,17 @@ class MainScreenViewModel @Inject constructor(
                 isError = false,
                 errorMessage = NO_ERROR
             )
+        }
+    }
+
+    /**
+     * Getting fake local banners
+     */
+    private fun getFakeBanners(): List<Int> {
+        return mutableListOf<Int>().apply {
+            add(R.drawable.banner_1)
+            add(R.drawable.banner_2)
+            add(R.drawable.banner_3)
         }
     }
 

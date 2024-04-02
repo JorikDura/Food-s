@@ -81,7 +81,10 @@ fun MainScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopBar()
+            TopBar(
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+            )
 
         },
         bottomBar = {
@@ -153,7 +156,8 @@ fun BottomBar(
             NavBarItem(
                 modifier = Modifier
                     .weight(1f),
-                isSelected = navItem == NavigationItems.Menu, //заглушка
+                //there is no any navigation lib, so just main screen(menu)
+                isSelected = navItem == NavigationItems.Menu,
                 titleId = navItem.titleId,
                 iconId = navItem.iconId
             )
