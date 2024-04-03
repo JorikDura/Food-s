@@ -232,14 +232,14 @@ fun MainContent(
                                 .background(colorResource(id = R.color.gray_white)),
                             state = rowListState
                         ) {
-                            items(items = state.tags, key = { it.id }) { tag ->
-                                TagItem(
+                            items(items = state.categories, key = { it.id }) { category ->
+                                CategoryItem(
                                     modifier = Modifier
                                         .padding(horizontal = 4.dp, vertical = 24.dp),
-                                    title = tag.title,
-                                    isSelected = tag == state.currentTag,
+                                    title = category.title,
+                                    isSelected = category == state.currentCategory,
                                     onClickListener = {
-                                        onEvent(MainScreenEvents.ChangeTag(tag))
+                                        onEvent(MainScreenEvents.ChangeCategory(category))
                                     }
                                 )
                             }
@@ -255,24 +255,33 @@ fun MainContent(
                         }
                     }
 
-                    if (state.meals.isNotEmpty()) {
-                        items(items = state.meals, key = { it.id }) { meal ->
-                            HorizontalDivider(color = colorResource(id = R.color.light))
-                            FoodItem(
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp, vertical = 16.dp),
-                                meal = meal,
-                                onClickListener = {
-                                    onEvent(MainScreenEvents.BuyMeal(meal))
-                                }
-                            )
+                    when {
+                        state.meals.isEmpty() -> {
+                            item {
+                                EmptyBox()
+                            }
                         }
-                    } else {
-                        item {
-                            EmptyBox()
+
+                        state.mealsIsLoading -> {
+                            item {
+                                LoadingBox()
+                            }
+                        }
+
+                        else -> {
+                            items(items = state.meals, key = { it.id }) { meal ->
+                                HorizontalDivider(color = colorResource(id = R.color.light))
+                                FoodItem(
+                                    modifier = Modifier
+                                        .padding(horizontal = 8.dp, vertical = 16.dp),
+                                    meal = meal,
+                                    onClickListener = {
+                                        onEvent(MainScreenEvents.BuyMeal(meal))
+                                    }
+                                )
+                            }
                         }
                     }
-
                 }
             }
         }
@@ -403,7 +412,7 @@ fun FoodItem(
 }
 
 @Composable
-fun TagItem(
+fun CategoryItem(
     modifier: Modifier = Modifier,
     title: String,
     isSelected: Boolean,

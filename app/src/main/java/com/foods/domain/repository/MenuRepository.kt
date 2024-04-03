@@ -1,16 +1,16 @@
 package com.foods.domain.repository
 
 import com.foods.domain.model.Meal
-import com.foods.domain.model.Tag
+import com.foods.domain.model.Category
 
 interface MenuRepository {
     /**
-     * Returns tags from db/api
+     * Returns categories from db/api
      */
-    suspend fun getTags(fromRemote: Boolean): Result<List<Tag>>
+    suspend fun getCategories(fromRemote: Boolean): Result<List<Category>>
     /**
      * Returns meals from db/api
-     * Can pass tag
+     * Can find by category
      */
-    suspend fun getMeals(fromRemote: Boolean, tag: String?): Result<List<Meal>>
+    suspend fun getMeals(fromRemote: Boolean, category: String?): Result<List<Meal>>
 }

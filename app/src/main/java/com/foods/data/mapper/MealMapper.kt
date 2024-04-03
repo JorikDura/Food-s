@@ -10,7 +10,7 @@ fun MealDto.toMealDao(): MealDao {
         id = id,
         title = title,
         imageUrl = imageUrl,
-        tag = tag,
+        category = category,
         ingredients = "$ingredient1, $ingredient2, $ingredient3, $ingredient4, $ingredient5, $ingredient6"
     )
 }
@@ -20,7 +20,7 @@ fun MealDao.toMeal(): Meal {
         id = id,
         title = title,
         imageUrl = imageUrl,
-        tag = tag,
+        category = category,
         ingredients = ingredients
     )
 }

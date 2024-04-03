@@ -3,9 +3,9 @@ package com.foods.presentation.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.foods.R
-import com.foods.domain.model.Tag
+import com.foods.domain.model.Category
 import com.foods.domain.use_case.GetMealsUseCase
-import com.foods.domain.use_case.GetTagsUseCase
+import com.foods.domain.use_case.GetCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
     private val getMealsUseCase: GetMealsUseCase,
-    private val getTagsUseCase: GetTagsUseCase
+    private val getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainScreenState(isLoading = true))
@@ -38,14 +38,14 @@ class MainScreenViewModel @Inject constructor(
                 //Sending meal to cart.
             }
 
-            is MainScreenEvents.ChangeTag -> {
+            is MainScreenEvents.ChangeCategory -> {
                 _state.update {
                     it.copy(
                         mealsIsLoading = true,
-                        currentTag = event.tag
+                        currentCategory = event.category
                     )
                 }
-                viewModelScope.launch { getMealsByTag() }
+                viewModelScope.launch { getMealsByCategory() }
             }
 
             is MainScreenEvents.Refresh -> {
@@ -53,7 +53,7 @@ class MainScreenViewModel @Inject constructor(
                     it.copy(
                         isLoading = true,
                         isRefreshing = true,
-                        tags = listOf(Tag()),
+                        categories = listOf(Category()),
                         meals = emptyList()
                     )
                 }
@@ -65,18 +65,22 @@ class MainScreenViewModel @Inject constructor(
     }
 
     /**
-     * Getting all data(tags, meals) from db/api
+     * Getting all data(categories, meals) from db/api
      */
     private suspend fun getData(fromRemote: Boolean = false) {
-        val tags = getTagsUseCase(fromRemote = fromRemote)
-        val meals = getMealsUseCase(fromRemote = fromRemote, tag = _state.value.currentTag.title)
+        val categories = getCategoriesUseCase(fromRemote = fromRemote)
+        val meals = getMealsUseCase(
+            fromRemote = fromRemote,
+            category = if (_state.value.currentCategory.title == DEFAULT_CATEGORY_VALUE) null
+            else _state.value.currentCategory.title
+        )
         when {
-            tags.isFailure -> {
-                val tagError = tags.exceptionOrNull()
+            categories.isFailure -> {
+                val categoryError = categories.exceptionOrNull()
                 _state.update {
                     it.copy(
                         isError = true,
-                        errorMessage = tagError?.message ?: DEFAULT_ERROR
+                        errorMessage = categoryError?.message ?: DEFAULT_ERROR
                     )
                 }
             }
@@ -92,15 +96,15 @@ class MainScreenViewModel @Inject constructor(
             }
 
             else -> {
-                val tagsResult = tags.getOrDefault(emptyList())
+                val categoriesResult = categories.getOrDefault(emptyList())
                 val mealsResult = meals.getOrDefault(emptyList())
                 _state.update {
                     it.copy(
                         isLoading = false,
                         mealsIsLoading = false,
                         isRefreshing = false,
-                        isEmpty = tagsResult.isEmpty() && mealsResult.isEmpty(),
-                        tags = _state.value.tags + tagsResult,
+                        isEmpty = categoriesResult.isEmpty() && mealsResult.isEmpty(),
+                        categories = _state.value.categories + categoriesResult,
                         meals = mealsResult,
                         banners = getFakeBanners(),
                         isError = false,
@@ -112,11 +116,11 @@ class MainScreenViewModel @Inject constructor(
     }
 
     /**
-     * Getting meals by tag
-     * Default tag is "All"
+     * Getting meals by category
+     * Default category = "All"
      */
-    private suspend fun getMealsByTag() {
-        val meals = getMealsUseCase(tag = _state.value.currentTag.title)
+    private suspend fun getMealsByCategory() {
+        val meals = getMealsUseCase(category = _state.value.currentCategory.title)
 
         if (meals.isFailure) {
             val mealError = meals.exceptionOrNull()
@@ -150,6 +154,7 @@ class MainScreenViewModel @Inject constructor(
     }
 
     companion object {
+        const val DEFAULT_CATEGORY_VALUE = "All"
         private const val DEFAULT_ERROR = "Something bad happened"
         private const val NO_ERROR = ""
     }

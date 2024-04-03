@@ -10,9 +10,9 @@ class GetMealsUseCase @Inject constructor(
 
     suspend operator fun invoke(
         fromRemote: Boolean = false,
-        tag: String? = null
+        category: String? = null
     ): Result<List<Meal>> {
-        return repository.getMeals(fromRemote = fromRemote, tag = tag)
+        return repository.getMeals(fromRemote = fromRemote, category = category)
     }
 
 }

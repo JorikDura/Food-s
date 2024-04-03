@@ -2,7 +2,7 @@ package com.foods.domain.model
 
 import kotlin.String
 
-data class Tag(
+data class Category(
     val id: String = UNDEFINED_ID,
     val title: String = "All"
 ) {

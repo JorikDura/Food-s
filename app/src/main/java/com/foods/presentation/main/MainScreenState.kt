@@ -1,7 +1,7 @@
 package com.foods.presentation.main
 
 import com.foods.domain.model.Meal
-import com.foods.domain.model.Tag
+import com.foods.domain.model.Category
 
 data class MainScreenState(
     val isLoading: Boolean = false,
@@ -9,9 +9,9 @@ data class MainScreenState(
     val isRefreshing: Boolean = false,
     val isEmpty: Boolean = false,
     val isError: Boolean = false,
-    val tags: List<Tag> = listOf(Tag()),
+    val categories: List<Category> = listOf(Category()),
     val banners: List<Int> = listOf(),
     val meals: List<Meal> = listOf(),
-    val currentTag: Tag = Tag(),
+    val currentCategory: Category = Category(),
     val errorMessage: String = ""
 )

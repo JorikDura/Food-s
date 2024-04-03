@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class MealDto(
     @SerializedName("idMeal") val id: String,
     @SerializedName("strMealThumb") val imageUrl: String,
-    @SerializedName("strCategory") val tag: String,
+    @SerializedName("strCategory") val category: String,
     @SerializedName("strMeal") val title: String,
     @SerializedName("strIngredient1") val ingredient1: String,
     @SerializedName("strIngredient2") val ingredient2: String,

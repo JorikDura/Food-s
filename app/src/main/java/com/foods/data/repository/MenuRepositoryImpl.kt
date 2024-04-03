@@ -4,10 +4,11 @@ import android.util.Log
 import com.foods.data.database.MealDataBase
 import com.foods.data.mapper.toMeal
 import com.foods.data.mapper.toMealDao
-import com.foods.data.mapper.toTag
+import com.foods.data.mapper.toCategoryDao
+import com.foods.data.mapper.toCategory
 import com.foods.data.network.ApiService
 import com.foods.domain.model.Meal
-import com.foods.domain.model.Tag
+import com.foods.domain.model.Category
 import com.foods.domain.repository.MenuRepository
 import retrofit2.HttpException
 import java.io.IOException
@@ -18,18 +19,18 @@ class MenuRepositoryImpl @Inject constructor(
     private val mealDB: MealDataBase
 ) : MenuRepository {
 
-    override suspend fun getTags(fromRemote: Boolean): Result<List<Tag>> {
+    override suspend fun getCategories(fromRemote: Boolean): Result<List<Category>> {
         try {
-            var tagsFromDb = mealDB.tagDao.getTags()
-            if (tagsFromDb.isEmpty() || fromRemote) {
-                val remoteTags = apiService.getTags().tags.map { it.toTag() }
-                remoteTags.forEach { tag ->
-                    mealDB.tagDao.upsertTag(tag)
+            var categoriesFromDb = mealDB.categoryQuery.getCategories()
+            if (categoriesFromDb.isEmpty() || fromRemote) {
+                val remoteCategories = apiService.getCategories().categories.map { it.toCategoryDao() }
+                remoteCategories.forEach { category ->
+                    mealDB.categoryQuery.upsertCategory(category)
                 }
-                tagsFromDb = mealDB.tagDao.getTags()
+                categoriesFromDb = mealDB.categoryQuery.getCategories()
             }
-            val tags = tagsFromDb.map { it.toTag() }
-            return Result.success(tags)
+            val categories = categoriesFromDb.map { it.toCategory() }
+            return Result.success(categories)
         } catch (e: HttpException) {
             Log.e("HttpException", e.message ?: "")
             return Result.failure(e)
@@ -39,20 +40,20 @@ class MenuRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMeals(fromRemote: Boolean, tag: String?): Result<List<Meal>> {
+    override suspend fun getMeals(fromRemote: Boolean, category: String?): Result<List<Meal>> {
         try {
             var mealFromDB =
-                if (tag.isNullOrBlank() || tag == DEFAULT_TAG_VALUE) mealDB.mealDao.getMeals()
-                else mealDB.mealDao.getMealsByTag(tag)
+                if (category.isNullOrBlank() || category == DEFAULT_CATEGORY_VALUE) mealDB.mealQuery.getMeals()
+                else mealDB.mealQuery.getMealsByCategory(category)
 
-            if (mealFromDB.isEmpty() && tag.isNullOrBlank() || fromRemote) {
+            if (mealFromDB.isEmpty() && category.isNullOrBlank() || fromRemote) {
                 val remoteMeals = apiService.getMeals().meals.map { it.toMealDao() }
                 remoteMeals.forEach { meal ->
-                    mealDB.mealDao.upsertMeal(meal)
+                    mealDB.mealQuery.upsertMeal(meal)
                 }
                 mealFromDB =
-                    if (tag.isNullOrBlank() || tag == DEFAULT_TAG_VALUE) mealDB.mealDao.getMeals()
-                    else mealDB.mealDao.getMealsByTag(tag)
+                    if (category.isNullOrBlank() || category == DEFAULT_CATEGORY_VALUE) mealDB.mealQuery.getMeals()
+                    else mealDB.mealQuery.getMealsByCategory(category)
             }
             val meals = mealFromDB.map { it.toMeal() }
             return Result.success(meals)
@@ -66,6 +67,6 @@ class MenuRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        const val DEFAULT_TAG_VALUE = "All"
+        const val DEFAULT_CATEGORY_VALUE = "All"
     }
 }

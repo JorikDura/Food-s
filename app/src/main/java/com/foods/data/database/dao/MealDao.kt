@@ -8,7 +8,7 @@ data class MealDao(
     @PrimaryKey
     val id: String = "0",
     val imageUrl: String,
-    val tag: String,
+    val category: String,
     val title: String,
     val ingredients: String
 )
